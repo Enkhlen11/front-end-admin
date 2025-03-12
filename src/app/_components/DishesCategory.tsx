@@ -43,8 +43,7 @@ export default function DishesCategory() {
   const [categories, setCategories] = useState<FoodCategoryType[]>();
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [isActive, setIsActive] = useState(false);
-// const[]
-  // const [open, setOpen] = useState();
+  const [deleteCategoryName, setDeleteCategoryName] = useState();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,13 +76,14 @@ export default function DishesCategory() {
     getCategories();
   };
 
-  // const deleteCategory = async () => {
-  //   const data = await fetch("http://localhost:4000", {
-  //     method: "DELETE",
-  //     headers: { "Content-Type": "application/json" },
-  //     body:JSON.sringify({categoryName:})
-  //   });
-  // };
+  const deleteCategory = async () => {
+    const data = await fetch("http://localhost:4000", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ categoryName: deleteCategoryName }),
+    });
+    getCategories();
+  };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -100,9 +100,12 @@ export default function DishesCategory() {
       <div className="flex gap-2">
         <ContextMenu>
           <ContextMenuTrigger className="flex flex-wrap gap-2 ">
-            {categories?.map((category: FoodCategoryType) => {
+            {categories?.map((category: FoodCategoryType, index) => {
               return (
-                <div className="border rounded-[20px] w-[80px] flex justify-center items">
+                <div
+                  key={index}
+                  className="border rounded-[20px] w-[80px] flex justify-center items"
+                >
                   {category.categoryName}
                 </div>
               );
@@ -129,7 +132,13 @@ export default function DishesCategory() {
             </Dialog>
           </ContextMenuTrigger>
           <ContextMenuContent>
-            <ContextMenuItem>Delete</ContextMenuItem>
+            <ContextMenuItem
+              value={newCategoryName}
+              onChange={(e) => setDeleteCategoryName(e.target.value)}
+              onClick={deleteCategory}
+            >
+              Delete
+            </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
       </div>
