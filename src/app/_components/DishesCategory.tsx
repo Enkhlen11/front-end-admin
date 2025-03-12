@@ -34,20 +34,17 @@ const formSchema = z.object({
 
 export default function DishesCategory() {
   const [categories, setCategories] = useState<FoodCategoryType[]>();
+  const [newCategoryName, setNewCategoryName] = useState<string>("");
+  const [isActive, setIsActive] = useState(false);
+
+  // const [open, setOpen] = useState();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       categoryname: "",
     },
   });
-
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-    alert(" zuv ajillaa");
-  }
 
   const getCategories = async () => {
     const data = await fetch("http://localhost:4000/food-category");
@@ -59,51 +56,60 @@ export default function DishesCategory() {
   useEffect(() => {
     getCategories();
   }, []);
+
+  const createCategory = async () => {
+    // console.log("createCategory duudagdlaa");
+    const data = await fetch("http://localhost:4000/food-category", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ categoryName: newCategoryName }),
+    });
+    handleClick();
+    getCategories();
+  };
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+    createCategory();
+    alert(" zuv ajillaa");
+  }
+
+  const handleClick = () => {
+    setIsActive(!isActive);
+  };
   return (
     <div className="bg-[white] w-[90%] h-[15%] rounded-[20px] mt-[50px] p-[20px] flex flex-col gap-5">
       <p className="text-[20px] font-bold">Dishes category</p>
-      <Dialog>
-        <DialogTrigger>
-          <div>
-            {categories?.map((category: FoodCategoryType) => {
-              return <div>{category.categoryName}</div>;
-            })}
-          </div>
-
-          <div className="w-[46px] h-[46px] bg-[#EF4444] rounded-full text-white flex justify-center items-center">
-            +
-          </div>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add new category name </DialogTitle>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                <FormField
-                  control={form.control}
-                  name="categoryname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Type category name..." {...field} />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </form>
-              <div className="flex justify-end">
-                <Button type="submit">Add category</Button>
-              </div>
-            </Form>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <div className="flex flex-wrap gap-2">
+        <Dialog open={isActive} onOpenChange={handleClick}>
+          <DialogTrigger onClick={handleClick}>
+            <div className="w-[46px] h-[46px] bg-[#EF4444] rounded-full text-white flex justify-center items-center">
+              +
+            </div>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogTitle>Add new category</DialogTitle>
+            <p>Category name</p>
+            <Input
+              placeholder="Type category name..."
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+            />
+            <Button type="submit" onClick={createCategory}>
+              Add category
+            </Button>
+          </DialogContent>
+        </Dialog>
+        {categories?.map((category: FoodCategoryType) => {
+          return (
+            <div className="border rounded-[20px] w-[80px] flex justify-center items">
+              {category.categoryName}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
