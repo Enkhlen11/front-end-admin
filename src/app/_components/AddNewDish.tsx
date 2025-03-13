@@ -48,7 +48,7 @@ function onSubmit(values: z.infer<typeof formSchema>) {
   console.log(values);
 }
 
-export function Appetizers() {
+export function AddNewDish() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

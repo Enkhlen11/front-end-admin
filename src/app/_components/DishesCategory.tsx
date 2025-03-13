@@ -44,6 +44,7 @@ export default function DishesCategory() {
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [isActive, setIsActive] = useState(false);
   const [deleteCategoryName, setDeleteCategoryName] = useState();
+  const [putCategoryName, setPutCategoryName] = useState();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,8 +77,8 @@ export default function DishesCategory() {
     getCategories();
   };
 
-  const deleteCategory = async () => {
-    const data = await fetch("http://localhost:4000", {
+  const deleteCategory = async (_id: string) => {
+    const data = await fetch(`http://localhost:4000/food-category/${_id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ categoryName: deleteCategoryName }),
@@ -85,11 +86,19 @@ export default function DishesCategory() {
     getCategories();
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    createCategory();
-    alert(" zuv ajillaa");
-  }
+  const putCategory = async (_id: string) => {
+    const data = await fetch(`http://localhost:4000/food-category/${_id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ foodCategoryId: _id }),
+    });
+  };
+
+  // function onSubmit(values: z.infer<typeof formSchema>) {
+  //   console.log(values);
+  //   createCategory();
+  //   alert(" zuv ajillaa");
+  // }
 
   const handleClick = () => {
     setIsActive(!isActive);
@@ -97,50 +106,48 @@ export default function DishesCategory() {
   return (
     <div className="bg-[white] w-[90%] h-[15%] rounded-[20px] mt-[50px] p-[20px] flex flex-col gap-5">
       <p className="text-[20px] font-bold">Dishes category</p>
-      <div className="flex gap-2">
-        <ContextMenu>
-          <ContextMenuTrigger className="flex flex-wrap gap-2 ">
-            {categories?.map((category: FoodCategoryType, index) => {
-              return (
+      <div className="flex gap-2 flex-wrap">
+        {categories?.map((category: FoodCategoryType, index) => {
+          return (
+            <ContextMenu key={index}>
+              <ContextMenuTrigger>
                 <div
                   key={index}
                   className="border rounded-[20px] w-[80px] flex justify-center items"
                 >
                   {category.categoryName}
                 </div>
-              );
-            })}
-
-            <Dialog open={isActive} onOpenChange={handleClick}>
-              <DialogTrigger onClick={handleClick}>
-                <div className="w-[46px] h-[46px] bg-[#EF4444] rounded-full text-white flex justify-center items-center">
-                  +
-                </div>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogTitle>Add new category</DialogTitle>
-                <p>Category name</p>
-                <Input
-                  placeholder="Type category name..."
-                  value={newCategoryName}
-                  onChange={(e) => setNewCategoryName(e.target.value)}
-                />
-                <Button type="submit" onClick={createCategory}>
-                  Add category
-                </Button>
-              </DialogContent>
-            </Dialog>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            <ContextMenuItem
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <ContextMenuItem onClick={(e) => putCategory(category._id)}>
+                  <p>Edit </p>
+                </ContextMenuItem>
+                <ContextMenuItem onClick={(e) => deleteCategory(category._id)}>
+                  <p>Delete</p>
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
+          );
+        })}
+        <Dialog open={isActive} onOpenChange={handleClick}>
+          <DialogTrigger onClick={handleClick}>
+            <div className="w-[46px] h-[46px] bg-[#EF4444] rounded-full text-white flex justify-center items-center">
+              +
+            </div>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogTitle>Add new category</DialogTitle>
+            <p>Category name</p>
+            <Input
+              placeholder="Type category name..."
               value={newCategoryName}
-              onChange={(e) => setDeleteCategoryName(e.target.value)}
-              onClick={deleteCategory}
-            >
-              Delete
-            </ContextMenuItem>
-          </ContextMenuContent>
-        </ContextMenu>
+              onChange={(e) => setNewCategoryName(e.target.value)}
+            />
+            <Button type="submit" onClick={createCategory}>
+              Add category
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
