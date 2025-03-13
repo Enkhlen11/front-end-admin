@@ -32,6 +32,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { Delete, DeleteIcon, Edit, LucideDelete, Trash2 } from "lucide-react";
 
 const formSchema = z.object({
   categoryname: z.string().min(2, {
@@ -43,8 +44,10 @@ export default function DishesCategory() {
   const [categories, setCategories] = useState<FoodCategoryType[]>();
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [isActive, setIsActive] = useState(false);
+
+  const [isEdit, setIsEdit] = useState(false);
   const [deleteCategoryName, setDeleteCategoryName] = useState();
-  const [putCategoryName, setPutCategoryName] = useState();
+  const [putCategoryName, setPutCategoryName] = useState<string>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -90,8 +93,9 @@ export default function DishesCategory() {
     const data = await fetch(`http://localhost:4000/food-category/${_id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ foodCategoryId: _id }),
+      body: JSON.stringify({ categoryName: putCategoryName }),
     });
+    setPutCategoryName("");
   };
 
   // function onSubmit(values: z.infer<typeof formSchema>) {
@@ -103,30 +107,63 @@ export default function DishesCategory() {
   const handleClick = () => {
     setIsActive(!isActive);
   };
+  const editHnadleClick = () => {
+    setIsEdit(!isEdit);
+  };
+
   return (
     <div className="bg-[white] w-[90%] h-[15%] rounded-[20px] mt-[50px] p-[20px] flex flex-col gap-5">
       <p className="text-[20px] font-bold">Dishes category</p>
       <div className="flex gap-2 flex-wrap">
         {categories?.map((category: FoodCategoryType, index) => {
           return (
-            <ContextMenu key={index}>
-              <ContextMenuTrigger>
-                <div
-                  key={index}
-                  className="border rounded-[20px] w-[80px] flex justify-center items"
-                >
-                  {category.categoryName}
-                </div>
-              </ContextMenuTrigger>
-              <ContextMenuContent>
-                <ContextMenuItem onClick={(e) => putCategory(category._id)}>
-                  <p>Edit </p>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={(e) => deleteCategory(category._id)}>
-                  <p>Delete</p>
-                </ContextMenuItem>
-              </ContextMenuContent>
-            </ContextMenu>
+            <>
+              <Dialog key={index}>
+                <ContextMenu>
+                  <ContextMenuTrigger>
+                    <div
+                      key={index}
+                      className="border rounded-[20px] w-[80px] flex justify-center items"
+                    >
+                      {category.categoryName}
+                    </div>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuItem>
+                      <DialogTrigger
+                        onClick={editHnadleClick}
+                        className="flex gap-2"
+                      >
+                        <Edit />
+                        <p>Edit </p>1
+                      </DialogTrigger>
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      className="gap-2"
+                      onClick={(e) => deleteCategory(category._id)}
+                    >
+                      <Trash2 />
+                      <p>Delete</p>
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
+                <DialogContent>
+                  <DialogTitle>Edit name category</DialogTitle>
+                  <p>Edit category name</p>
+                  <Input
+                    placeholder={category.categoryName}
+                    value={putCategoryName}
+                    onChange={(e) => setPutCategoryName(e.target.value)}
+                  />
+                  <Button
+                    type="submit"
+                    onClick={(e) => putCategory(category._id)}
+                  >
+                    Edit category
+                  </Button>
+                </DialogContent>
+              </Dialog>
+            </>
           );
         })}
         <Dialog open={isActive} onOpenChange={handleClick}>
