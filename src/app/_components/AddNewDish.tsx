@@ -48,7 +48,7 @@ function onSubmit(values: z.infer<typeof formSchema>) {
   console.log(values);
 }
 
-export function AddNewDish() {
+export function AddNewDish({ name }: { name: string }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -62,7 +62,8 @@ export function AddNewDish() {
           <div className="w-[46px] h-[46px] bg-[#EF4444] rounded-full text-white flex justify-center items-center">
             +
           </div>
-          Add new Dish to Appetizers
+          <p>Add new Dish to </p>
+          <p>{name}</p>
         </div>
       </DialogTrigger>
       <DialogContent>

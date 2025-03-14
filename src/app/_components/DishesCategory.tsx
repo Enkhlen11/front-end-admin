@@ -112,7 +112,7 @@ export default function DishesCategory() {
   };
 
   return (
-    <div className="bg-[white] w-[90%] h-[15%] rounded-[20px] mt-[50px] p-[20px] flex flex-col gap-5">
+    <div className="bg-[white] w-[100%] h-[15%] rounded-[20px] mt-[50px] p-[20px] flex flex-col gap-5">
       <p className="text-[20px] font-bold">Dishes category</p>
       <div className="flex gap-2 flex-wrap">
         {categories?.map((category: FoodCategoryType, index) => {
