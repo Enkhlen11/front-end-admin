@@ -117,53 +117,51 @@ export default function DishesCategory() {
       <div className="flex gap-2 flex-wrap">
         {categories?.map((category: FoodCategoryType, index) => {
           return (
-            <>
-              <Dialog key={index}>
-                <ContextMenu>
-                  <ContextMenuTrigger>
-                    <div
-                      key={index}
-                      className="border rounded-[20px] w-[80px] flex justify-center items"
-                    >
-                      {category.categoryName}
-                    </div>
-                  </ContextMenuTrigger>
-                  <ContextMenuContent>
-                    <ContextMenuItem>
-                      <DialogTrigger
-                        onClick={editHnadleClick}
-                        className="flex gap-2"
-                      >
-                        <Edit />
-                        <p>Edit </p>1
-                      </DialogTrigger>
-                    </ContextMenuItem>
-                    <ContextMenuItem
-                      className="gap-2"
-                      onClick={(e) => deleteCategory(category._id)}
-                    >
-                      <Trash2 />
-                      <p>Delete</p>
-                    </ContextMenuItem>
-                  </ContextMenuContent>
-                </ContextMenu>
-                <DialogContent>
-                  <DialogTitle>Edit name category</DialogTitle>
-                  <p>Edit category name</p>
-                  <Input
-                    placeholder={category.categoryName}
-                    value={putCategoryName}
-                    onChange={(e) => setPutCategoryName(e.target.value)}
-                  />
-                  <Button
-                    type="submit"
-                    onClick={(e) => putCategory(category._id)}
+            <Dialog key={index}>
+              <ContextMenu>
+                <ContextMenuTrigger>
+                  <div
+                    key={index}
+                    className="border rounded-[20px] w-[80px] flex justify-center items"
                   >
-                    Edit category
-                  </Button>
-                </DialogContent>
-              </Dialog>
-            </>
+                    {category.categoryName}
+                  </div>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                  <ContextMenuItem>
+                    <DialogTrigger
+                      onClick={editHnadleClick}
+                      className="flex gap-2"
+                    >
+                      <Edit />
+                      <p>Edit </p>1
+                    </DialogTrigger>
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    className="gap-2"
+                    onClick={(e) => deleteCategory(category._id)}
+                  >
+                    <Trash2 />
+                    <p>Delete</p>
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
+              <DialogContent>
+                <DialogTitle>Edit name category</DialogTitle>
+                <p>Edit category name</p>
+                <Input
+                  placeholder={category.categoryName}
+                  value={putCategoryName}
+                  onChange={(e) => setPutCategoryName(e.target.value)}
+                />
+                <Button
+                  type="submit"
+                  onClick={(e) => putCategory(category._id)}
+                >
+                  Edit category
+                </Button>
+              </DialogContent>
+            </Dialog>
           );
         })}
         <Dialog open={isActive} onOpenChange={handleClick}>

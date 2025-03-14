@@ -25,6 +25,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Textarea } from "@/components/ui/textarea";
+import { useEffect, useState } from "react";
+import { FoodCategoryType, FoodType } from "../_util/type";
 
 const formSchema = z.object({
   foodname: z.string().min(2, {
@@ -49,12 +51,14 @@ function onSubmit(values: z.infer<typeof formSchema>) {
 }
 
 export function AddNewDish({ name }: { name: string }) {
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       foodname: "",
     },
   });
+
   return (
     <Dialog>
       <DialogTrigger>
