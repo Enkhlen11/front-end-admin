@@ -32,7 +32,11 @@ const CategoryFoods = ({ category }: { category: FoodCategoryType }) => {
               className="w-[250px] h-[250px] rounded-[20px] border-[gray] border flex flex-col justify-center items-center gap-5"
             >
               <div className="w-[200px] h-[200px] bg-[#EF4444] pt-[20px] text-white flex justify-center items-center"></div>
-              <p>{food.foodName}</p>
+              <div className="flex gap-3">
+                <p>{food.foodName}</p>
+                <p>{food.price}</p>
+              </div>
+              <p>{food.ingredietnts}</p>
             </div>
           );
         })}

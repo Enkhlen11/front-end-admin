@@ -8,19 +8,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -34,12 +21,6 @@ import {
 } from "@/components/ui/context-menu";
 import { Delete, DeleteIcon, Edit, LucideDelete, Trash2 } from "lucide-react";
 
-const formSchema = z.object({
-  categoryname: z.string().min(2, {
-    message: "Category name must be at least 2 characters.",
-  }),
-});
-
 export default function DishesCategory() {
   const [categories, setCategories] = useState<FoodCategoryType[]>();
   const [newCategoryName, setNewCategoryName] = useState<string>("");
@@ -49,11 +30,9 @@ export default function DishesCategory() {
   const [deleteCategoryName, setDeleteCategoryName] = useState();
   const [putCategoryName, setPutCategoryName] = useState<string>();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      categoryname: "",
-    },
+  const [selectedCategory, setSelectedCategory] = useState<FoodCategoryType>({
+    _id: "",
+    categoryName: "",
   });
 
   const getCategories = async () => {
@@ -95,6 +74,8 @@ export default function DishesCategory() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ categoryName: putCategoryName }),
     });
+    getCategories();
+    editHnadleClick();
     setPutCategoryName("");
   };
 
@@ -115,55 +96,60 @@ export default function DishesCategory() {
     <div className="bg-[white] w-[100%] h-[15%] rounded-[20px] mt-[50px] p-[20px] flex flex-col gap-5">
       <p className="text-[20px] font-bold">Dishes category</p>
       <div className="flex gap-2 flex-wrap">
-        {categories?.map((category: FoodCategoryType, index) => {
-          return (
-            <Dialog key={index}>
-              <ContextMenu>
-                <ContextMenuTrigger>
-                  <div
-                    key={index}
-                    className="border rounded-[20px] w-[80px] flex justify-center items"
-                  >
-                    {category.categoryName}
-                  </div>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                  <ContextMenuItem>
-                    <DialogTrigger
-                      onClick={editHnadleClick}
-                      className="flex gap-2"
+        <Dialog open={isEdit} onOpenChange={editHnadleClick}>
+          {categories?.map((category: FoodCategoryType, index) => {
+            return (
+              <>
+                <ContextMenu>
+                  <ContextMenuTrigger>
+                    <div
+                      key={index}
+                      className="border rounded-[20px] w-[80px] flex justify-center items"
                     >
-                      <Edit />
-                      <p>Edit </p>1
-                    </DialogTrigger>
-                  </ContextMenuItem>
-                  <ContextMenuItem
-                    className="gap-2"
-                    onClick={(e) => deleteCategory(category._id)}
-                  >
-                    <Trash2 />
-                    <p>Delete</p>
-                  </ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
-              <DialogContent>
-                <DialogTitle>Edit name category</DialogTitle>
-                <p>Edit category name</p>
-                <Input
-                  placeholder={category.categoryName}
-                  value={putCategoryName}
-                  onChange={(e) => setPutCategoryName(e.target.value)}
-                />
-                <Button
-                  type="submit"
-                  onClick={(e) => putCategory(category._id)}
-                >
-                  Edit category
-                </Button>
-              </DialogContent>
-            </Dialog>
-          );
-        })}
+                      {category.categoryName}
+                    </div>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuItem>
+                      <DialogTrigger
+                        onClick={() => {
+                          editHnadleClick(),
+                            setSelectedCategory(category),
+                            setPutCategoryName(category.categoryName);
+                        }}
+                        className="flex gap-2"
+                      >
+                        <Edit />
+                        <p>Edit </p>1
+                      </DialogTrigger>
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      className="gap-2"
+                      onClick={(e) => deleteCategory(category._id)}
+                    >
+                      <Trash2 />
+                      <p>Delete</p>
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
+              </>
+            );
+          })}
+          <DialogContent>
+            <DialogTitle>Edit name category</DialogTitle>
+            <p>Edit category name</p>
+            <Input
+              value={putCategoryName}
+              onChange={(e) => setPutCategoryName(e.target.value)}
+            />
+            <Button
+              type="submit"
+              onClick={(e) => putCategory(selectedCategory._id)}
+            >
+              Edit category
+            </Button>
+          </DialogContent>
+        </Dialog>
         <Dialog open={isActive} onOpenChange={handleClick}>
           <DialogTrigger onClick={handleClick}>
             <div className="w-[46px] h-[46px] bg-[#EF4444] rounded-full text-white flex justify-center items-center">
