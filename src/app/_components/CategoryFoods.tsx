@@ -34,7 +34,6 @@ const CategoryFoods = ({ category }: { category: FoodCategoryType }) => {
       </div>
       <div className="flex felx-col gap-4 pt-10">
         <Dialog>
-          Open
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Are you absolutely sure?</DialogTitle>
