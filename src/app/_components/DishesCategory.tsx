@@ -100,12 +100,9 @@ export default function DishesCategory() {
           {categories?.map((category: FoodCategoryType, index) => {
             return (
               <>
-                <ContextMenu>
+                <ContextMenu key={index}>
                   <ContextMenuTrigger>
-                    <div
-                      key={index}
-                      className="border rounded-[20px] w-[80px] flex justify-center items"
-                    >
+                    <div className="border rounded-[20px] w-[80px] flex justify-center items">
                       {category.categoryName}
                     </div>
                   </ContextMenuTrigger>

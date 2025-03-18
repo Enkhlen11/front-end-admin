@@ -27,6 +27,7 @@ import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { FoodCategoryType, FoodType } from "../_util/type";
+import { CloudinaryUpload } from "../_util/CloudinaryUpload";
 
 const formSchema = z.object({
   foodname: z.string().min(2, {
@@ -51,7 +52,6 @@ function onSubmit(values: z.infer<typeof formSchema>) {
 }
 
 export function AddNewDish({ name }: { name: string }) {
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -144,7 +144,8 @@ export function AddNewDish({ name }: { name: string }) {
               />
             </form>
           </Form>
-          <Form {...form}>
+          <CloudinaryUpload />
+          {/* <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
@@ -161,7 +162,7 @@ export function AddNewDish({ name }: { name: string }) {
                 )}
               />
             </form>
-          </Form>
+          </Form> */}
           <div className="flex justify-end">
             <Button className="w-[100px]" type="submit">
               Add dish
